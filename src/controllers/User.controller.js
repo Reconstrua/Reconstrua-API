@@ -23,11 +23,11 @@ export const editUser = async (req, res) => {
     const editedUser = await instanceUserService.editUser(id, first_name, last_name, email, phone, password, cep, street, neighborhood, city, state, complement, story);
 
     return res.status(200).json({ editedUser });
-}
+};
 
 export const deleteUser = async (req, res) => {
     const { id } = req.params;
     const deletedUser = await instanceUserService.deleteUser(id);
 
     return res.status(200).json({ deletedUser });
-}
+};
