@@ -20,10 +20,11 @@ beneficiaryRouter.post(
   registerBeneficiary,
 );
 
-beneficiaryRouter.get("/", getAllBeneficiaries);
+beneficiaryRouter.get("/", authAdmin, getAllBeneficiaries);
 
 beneficiaryRouter.get(
   "/:id",
+  authAdmin,
   uuidv4Validator,
   handleValidationResult,
   getBeneficiaryById,
