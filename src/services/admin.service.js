@@ -29,6 +29,13 @@ export class AdminService {
       password: hashedPassword,
     });
   }
+
+  async loginAdmin(username, password) {
+    const admin = await validateAdminCredentials(username, password);
+    const token = createToken(admin);
+    return token;
+  }
+
   async getAllAdmins() {
     const adminsFound = await Admin.findAll();
 
