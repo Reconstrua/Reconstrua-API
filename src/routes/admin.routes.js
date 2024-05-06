@@ -13,8 +13,34 @@ import { authAdmin } from "../middlewares/auth/authAdmin.middleware.js";
 
 export const adminRouter = Router();
 
-adminRouter.post("/", validateAdminRegister, handleValidationResult, registerAdmin);
-adminRouter.post("/login", validateAdminRegister, handleValidationResult, loginAdmin);
+adminRouter.post(
+  "/",
+  validateAdminRegister,
+  handleValidationResult,
+  registerAdmin,
+);
+
+adminRouter.post(
+  "/login",
+  validateAdminRegister,
+  handleValidationResult,
+  loginAdmin,
+);
+
 adminRouter.get("/", authAdmin, getAllAdmins);
-adminRouter.put("/:id", uuidv4Validator, handleValidationResult, updateAdmin);
-adminRouter.delete("/:id", uuidv4Validator, handleValidationResult, deleteAdmin);
+
+adminRouter.put(
+  "/:id",
+  authAdmin,
+  uuidv4Validator,
+  handleValidationResult,
+  updateAdmin,
+);
+
+adminRouter.delete(
+  "/:id",
+  authAdmin,
+  uuidv4Validator,
+  handleValidationResult,
+  deleteAdmin,
+);
