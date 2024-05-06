@@ -7,7 +7,7 @@ export const registerAdmin = async (req, res) => {
   await instanceAdminService.registerAdmin(username, password, providedToken);
 
   return res.status(201).json({
-    message: "Admin criado com sucesso.",
+    message: "Admin cadastrado com sucesso.",
   });
 };
 
