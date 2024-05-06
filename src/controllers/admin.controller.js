@@ -11,6 +11,17 @@ export const registerAdmin = async (req, res) => {
   });
 };
 
+export const loginAdmin = async (req, res) => {
+  const { username, password } = req.body;
+
+  const adminToken = await instanceAdminService.loginAdmin(username, password);
+
+  return res.status(200).json({
+    message: "Login efetuado com sucesso.",
+    token: adminToken,
+  });
+};
+
 export const getAllAdmins = async (req, res) => {
   const adminsList = await instanceAdminService.getAllAdmins();
 
