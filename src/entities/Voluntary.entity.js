@@ -25,6 +25,7 @@ export const Voluntary = sequelize.define("Voluntary", {
   phone: {
     type: DataTypes.STRING(13),
     allowNull: false,
+    unique: true,
   },
   description: {
     type: DataTypes.TEXT,
