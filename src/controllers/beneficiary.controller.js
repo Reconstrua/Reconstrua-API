@@ -20,7 +20,7 @@ export const registerBeneficiary = async (req, res) => {
   await instanceBeneficiaryService.registerBeneficiary(beneficiaryData);
 
   return res.status(201).json({
-    message: "Beneficiado criado com sucesso.",
+    message: "Beneficiado cadastrado com sucesso.",
   });
 };
 
