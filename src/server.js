@@ -7,7 +7,7 @@ import { logRoutes } from "./middlewares/utils/log.middleware.js";
 import corsMiddleware from "./middlewares/utils/cors.middleware.js";
 
 export const app = express();
-const port = 4000;
+const port = process.env.PORT;
 
 app.use(express.json());
 app.use(corsMiddleware);
