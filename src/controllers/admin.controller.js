@@ -48,3 +48,7 @@ export const deleteAdmin = async (req, res) => {
     message: "Admin deletado com sucesso.",
   });
 };
+
+export const uptime = async (req, res) => {
+  return res.status(200).send("Hello world!");
+};

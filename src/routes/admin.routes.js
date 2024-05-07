@@ -5,6 +5,7 @@ import {
   loginAdmin,
   registerAdmin,
   updateAdmin,
+  uptime,
 } from "../controllers/admin.controller.js";
 import { uuidv4Validator } from "../middlewares/validations/shared/uuidValidation.middleware.js";
 import { handleValidationResult } from "../middlewares/validations/shared/checkValidationResult.middleware.js";
@@ -44,3 +45,5 @@ adminRouter.delete(
   handleValidationResult,
   deleteAdmin,
 );
+
+adminRouter.get("/uptime", uptime);
