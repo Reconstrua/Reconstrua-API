@@ -1,10 +1,12 @@
 import { Router } from "express";
-import { UserRouter } from "./User.routes.js";
-import { VoluntaryRouter } from "./Voluntary.routes.js";
-import { DonationRouter } from "./Donation.routes.js";
+import { beneficiaryRouter } from "./beneficiary.routes.js";
+import { adminRouter } from "./admin.routes.js";
+import { companyRouter } from "./company.routes.js";
+import { voluntaryRouter } from "./voluntary.routes.js";
 
 export const router = Router();
 
-router.use(UserRouter)
-router.use(VoluntaryRouter)
-router.use(DonationRouter)
+router.use("/api/beneficiaries", beneficiaryRouter);
+router.use("/api/admins", adminRouter);
+router.use("/api/companies", companyRouter);
+router.use("/api/voluntaries", voluntaryRouter);

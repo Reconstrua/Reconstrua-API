@@ -1,14 +1,19 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../database/connection.js";
+import { Donation } from "./Donation.entity.js";
 
-export const Company = sequelize.define("Company", {
+export const Beneficiary = sequelize.define("Beneficiary", {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
     allowNull: false,
   },
-  company_name: {
+  first_name: {
+    type: DataTypes.STRING(255),
+    allowNull: false,
+  },
+  last_name: {
     type: DataTypes.STRING(255),
     allowNull: false,
   },
@@ -21,10 +26,6 @@ export const Company = sequelize.define("Company", {
     type: DataTypes.STRING(13),
     allowNull: false,
     unique: true,
-  },
-  website: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
   },
   cep: {
     type: DataTypes.STRING(9),
@@ -54,4 +55,8 @@ export const Company = sequelize.define("Company", {
     type: DataTypes.TEXT,
     allowNull: false,
   },
+});
+
+import("./Voluntary.entity.js").then(({ Voluntary }) => {
+  Beneficiary.belongsToMany(Voluntary, { through: Donation });
 });

@@ -1,0 +1,1193 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Reconstrua API
+  description: >-
+    A API do Reconstrua é uma plataforma inovadora que conecta pessoas em situação de rua ou afetadas por tragédias com voluntários dispostos a ajudar. Através de nossa API, é possível gerenciar empresas, voluntários, beneficiados e administradores, facilitando o processo de doação, alojamento e apoio emocional. Nossa missão é transformar vidas através da solidariedade e da tecnologia, proporcionando moradia e esperança para aqueles que mais precisam.
+
+
+    [Frontend Recontrua](https://reconstrua.netlify.app/)
+
+tags:
+  - name: admin login
+    description: Esta rota permite que os administradores façam login na plataforma, garantindo acesso exclusivo a rotas e funcionalidades administrativas
+  - name: admin
+    description: Essas rotas permitem gerenciar os administradores
+  - name: beneficiary
+    description: Essas rotas permitem gerenciar os beneficiados cadastrados
+  - name: company
+    description: Essas rotas permitem gerenciar as empresas cadastradas
+  - name: voluntary
+    description: Essas rotas permitem gerenciar os voluntários cadastrados
+
+paths:
+  # ADMIN LOGIN
+  /api/admins/login:
+    post:
+      tags:
+        - admin login
+      operationId: postLoginAdmin
+      summary: Autenticação de administradores
+      description: |
+        utilize o username: admin e password: admin para autenticar-se.
+
+        Após a autenticação bem-sucedida, o administrador receberá um token de acesso que pode ser usado para acessar rotas protegidas e gerenciar a plataforma.
+      requestBody:
+        description: Os dados necessários para autenticação de admin devem ser especificados usando o formato JSON no corpo da requisição.
+        $ref: "#/components/requestBodies/LoginAdmin"
+      responses:
+        "200":
+          description: Login realizado com sucesso e token de autenticação retornado no corpo da resposta.
+          $ref: "#/components/responses/Success/LoginAdmin"
+        "401":
+          description: Credenciais inválidas.
+          $ref: "#/components/responses/Error"
+        "422":
+          description: Pelo menos um dos valores enviado no corpo da requisição é inválido.
+          $ref: "#/components/responses/Error422"
+        "500":
+          description: O servidor encontrou um erro ao tentar autenticar administrador
+          $ref: "#/components/responses/Error"
+  # ADMIN GET
+  /api/admins:
+    get:
+      tags:
+        - admin
+      operationId: getAdmins
+      summary: Busca todos os administradores existentes
+      description: Para utilizar essa rota é preciso estar autenticado, realize o login e insira o token de autenticação no authorize.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Administradores buscados com sucesso e retornados no corpo da resposta.
+          $ref: "#/components/responses/Success/GetAdmins"
+        "404":
+          description: Nenhum administrador encontrado.
+          $ref: "#/components/responses/Error"
+        "401":
+          description: Você não está autenticado como administrador.
+          $ref: "#/components/responses/Error"
+        "500":
+          description: O servidor encontrou um erro ao buscar administradores
+          $ref: "#/components/responses/Error"
+  # ADMIN UPDATE
+  /api/admins/{admin_id}:
+    put:
+      tags:
+        - admin
+      operationId: putAdmin
+      summary: Atualiza administrador
+      description: Para utilizar essa rota é preciso estar autenticado, realize o login e insira o token de autenticação no authorize.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: admin_id
+          in: path
+          description: ID do administrador a ser atualizado
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Os dados necessários para atualização de admin devem ser especificados usando o formato JSON no corpo da requisição.
+        $ref: "#/components/requestBodies/UpdateAdmin"
+      responses:
+        "200":
+          description: Admin atualizado com sucesso.
+          $ref: "#/components/responses/Success/Default"
+        "401":
+          description: Você não está autenticado como administrador.
+          $ref: "#/components/responses/Error"
+        "422":
+          description: Pelo menos um dos valores enviado no corpo ou parâmetro da requisição é inválido.
+          $ref: "#/components/responses/Error422"
+        "500":
+          description: O servidor encontrou um erro ao tentar autenticar administrador
+          $ref: "#/components/responses/Error"
+  # VOLUNTARY
+  /api/voluntaries:
+    post:
+      tags:
+        - voluntary
+      operationId: postVoluntary
+      summary: Cadastra um voluntário
+      description: Cadastra um novo voluntário.
+      requestBody:
+        description: Os dados necessários para cadastro de voluntário devem ser especificados usando o formato JSON no corpo da requisição.
+        $ref: "#/components/requestBodies/Voluntary"
+      responses:
+        "201":
+          description: Voluntário cadastrado com sucesso.
+          $ref: "#/components/responses/Success/Default"
+        "409":
+          description: Voluntário já cadastrado.
+          $ref: "#/components/responses/Error"
+        "422":
+          description: Pelo menos um dos valores enviado no corpo da requisição é inválido.
+          $ref: "#/components/responses/Error422"
+        "500":
+          description: O servidor encontrou um erro ao tentar cadastrar um voluntário
+          $ref: "#/components/responses/Error"
+    get:
+      tags:
+        - voluntary
+      operationId: getAllVoluntaries
+      summary: Busca todos os voluntários existentes
+      description: Para utilizar essa rota é preciso estar autenticado, realize o login e insira o token de autenticação no authorize.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Voluntários buscados com sucesso e retornados no corpo da resposta.
+          $ref: "#/components/responses/Success/GetVoluntaries"
+        "401":
+          description: Você não está autenticado como administrador.
+          $ref: "#/components/responses/Error"
+        "404":
+          description: Voluntários não encontrados.
+          $ref: "#/components/responses/Error"
+        "500":
+          description: O servidor encontrou um erro ao tentar cadastrar um voluntário
+          $ref: "#/components/responses/Error"
+  /api/voluntaries/{voluntary_id}:
+    get:
+      tags:
+        - voluntary
+      operationId: getVoluntaryById
+      summary: Busca um voluntário
+      description: Para utilizar essa rota é preciso  estar autenticado, realize o login e insira o token de autenticação no authorize.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: voluntary_id
+          in: path
+          description: ID do voluntário a ser buscado
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Voluntário buscado com sucesso e retornado no corpo da resposta.
+          $ref: "#/components/responses/Success/GetVoluntary"
+        "404":
+          description: Voluntário não encontrado.
+          $ref: "#/components/responses/Error"
+        "401":
+          description: Você não está autenticado como administrador.
+          $ref: "#/components/responses/Error"
+        "422":
+          description: ID de voluntário fornecido é inválido.
+          $ref: "#/components/responses/Error422"
+        "500":
+          description: O servidor encontrou um erro ao tentar cadastrar um voluntário
+          $ref: "#/components/responses/Error"
+    put:
+      tags:
+        - voluntary
+      operationId: updateVoluntary
+      summary: Atualiza um voluntário
+      description: Para utilizar essa rota é preciso estar autenticado, realize o login e insira o token de autenticação no authorize.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: voluntary_id
+          in: path
+          description: ID do voluntário a ser atualizado
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Os dados necessários para atualização de voluntário devem ser especificados usando o formato JSON no corpo da requisição.
+        $ref: "#/components/requestBodies/Voluntary"
+      responses:
+        "200":
+          description: Voluntário atualizado com sucesso.
+          $ref: "#/components/responses/Success/Default"
+        "401":
+          description: Você não está autenticado como administrador.
+          $ref: "#/components/responses/Error"
+        "404":
+          description: Voluntário não encontrado.
+          $ref: "#/components/responses/Error"
+        "422":
+          description: Pelo menos um dos valores enviado no corpo ou parâmetro da requisição é inválido.
+          $ref: "#/components/responses/Error422"
+        "500":
+          description: O servidor encontrou um erro ao tentar atualizar voluntário
+          $ref: "#/components/responses/Error"
+    delete:
+      tags:
+        - voluntary
+      operationId: deleteVoluntary
+      summary: Deleta um voluntário
+      description: Para utilizar essa rota é preciso estar autenticado, realize o login e insira o token de autenticação no authorize.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: voluntary_id
+          in: path
+          description: ID do voluntário a ser deletado
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Voluntário deletado com sucesso.
+          $ref: "#/components/responses/Success/Default"
+        "401":
+          description: Você não está autenticado como administrador.
+          $ref: "#/components/responses/Error"
+        "404":
+          description: Voluntário não encontrado.
+          $ref: "#/components/responses/Error"
+        "422":
+          description: ID do voluntário fornecido é inválido.
+          $ref: "#/components/responses/Error422"
+        "500":
+          description: O servidor encontrou um erro ao tentar deletar voluntário
+          $ref: "#/components/responses/Error"
+  # BENEFICIARY
+  /api/beneficiaries:
+    post:
+      tags:
+        - beneficiary
+      operationId: postBeneficiary
+      summary: Cadastra um beneficiado
+      description: Cadastra um novo beneficiado.
+      requestBody:
+        description: Os dados necessários para cadastro de beneficiado devem ser especificados usando o formato JSON no corpo da requisição.
+        $ref: "#/components/requestBodies/Beneficiary"
+      responses:
+        "201":
+          description: Beneficiado cadastrado com sucesso.
+          $ref: "#/components/responses/Success/Default"
+        "409":
+          description: Beneficiado já cadastrado.
+          $ref: "#/components/responses/Error"
+        "422":
+          description: Pelo menos um dos valores enviado no corpo da requisição é inválido.
+          $ref: "#/components/responses/Error422"
+        "500":
+          description: O servidor encontrou um erro ao tentar cadastrar um beneficiado.
+          $ref: "#/components/responses/Error"
+    get:
+      tags:
+        - beneficiary
+      operationId: getAllBeneficiaries
+      summary: Busca todos os beneficiados existentes
+      description: Para utilizar essa rota é preciso estar autenticado, realize o login e insira o token de autenticação no authorize.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Voluntários buscados com sucesso e retornados no corpo da resposta.
+          $ref: "#/components/responses/Success/GetBeneficiaries"
+        "401":
+          description: Você não está autenticado como administrador.
+          $ref: "#/components/responses/Error"
+        "404":
+          description: Beneficiados não encontrados.
+          $ref: "#/components/responses/Error"
+        "500":
+          description: O servidor encontrou um erro ao tentar buscar beneficiados.
+          $ref: "#/components/responses/Error"
+  /api/beneficiaries/{beneficiary_id}:
+    get:
+      tags:
+        - beneficiary
+      operationId: getBeneficiaryById
+      summary: Busca um beneficiado
+      description: Para utilizar essa rota é preciso  estar autenticado, realize o login e insira o token de autenticação no authorize.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: beneficiary_id
+          in: path
+          description: ID do beneficiado a ser buscado
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Beneficiado buscado com sucesso e retornado no corpo da resposta.
+          $ref: "#/components/responses/Success/GetBeneficiary"
+        "404":
+          description: Beneficiado não encontrado.
+          $ref: "#/components/responses/Error"
+        "401":
+          description: Você não está autenticado como administrador.
+          $ref: "#/components/responses/Error"
+        "422":
+          description: ID de beneficiado fornecido é inválido.
+          $ref: "#/components/responses/Error422"
+        "500":
+          description: O servidor encontrou um erro ao tentar buscar beneficiado.
+          $ref: "#/components/responses/Error"
+    put:
+      tags:
+        - beneficiary
+      operationId: updateBeneficiary
+      summary: Atualiza um beneficiado
+      description: Para utilizar essa rota é preciso estar autenticado, realize o login e insira o token de autenticação no authorize.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: beneficiary_id
+          in: path
+          description: ID do beneficiado a ser atualizado
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Os dados necessários para atualização de beneficiado devem ser especificados usando o formato JSON no corpo da requisição.
+        $ref: "#/components/requestBodies/Beneficiary"
+      responses:
+        "200":
+          description: Beneficiado atualizado com sucesso.
+          $ref: "#/components/responses/Success/Default"
+        "401":
+          description: Você não está autenticado como administrador.
+          $ref: "#/components/responses/Error"
+        "404":
+          description: Beneficiado não encontrado.
+          $ref: "#/components/responses/Error"
+        "422":
+          description: Pelo menos um dos valores enviado no corpo ou parâmetro da requisição é inválido.
+          $ref: "#/components/responses/Error422"
+        "500":
+          description: O servidor encontrou um erro ao tentar atualizar beneficiado.
+          $ref: "#/components/responses/Error"
+    delete:
+      tags:
+        - beneficiary
+      operationId: deleteBeneficiary
+      summary: Deleta um beneficiado
+      description: Para utilizar essa rota é preciso estar autenticado, realize o login e insira o token de autenticação no authorize.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: beneficiary_id
+          in: path
+          description: ID do beneficiado a ser deletado
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Beneficiado deletado com sucesso.
+          $ref: "#/components/responses/Success/Default"
+        "401":
+          description: Você não está autenticado como administrador.
+          $ref: "#/components/responses/Error"
+        "404":
+          description: Beneficiado não encontrado.
+          $ref: "#/components/responses/Error"
+        "422":
+          description: ID do beneficiado fornecido é inválido.
+          $ref: "#/components/responses/Error422"
+        "500":
+          description: O servidor encontrou um erro ao tentar deletar beneficiado.
+          $ref: "#/components/responses/Error"
+  # COMPANY
+  /api/companies:
+    post:
+      tags:
+        - company
+      operationId: postCompany
+      summary: Cadastra uma empresa
+      description: Cadastra uma empresa parceira.
+      requestBody:
+        description: Os dados necessários para cadastro da empresa devem ser especificados usando o formato JSON no corpo da requisição.
+        $ref: "#/components/requestBodies/Company"
+      responses:
+        "201":
+          description: Empresa cadastrada com sucesso.
+          $ref: "#/components/responses/Success/Default"
+        "409":
+          description: Empresa já cadastrada.
+          $ref: "#/components/responses/Error"
+        "422":
+          description: Pelo menos um dos valores enviado no corpo da requisição é inválido.
+          $ref: "#/components/responses/Error422"
+        "500":
+          description: O servidor encontrou um erro ao tentar cadastrar uma empresa.
+          $ref: "#/components/responses/Error"
+    get:
+      tags:
+        - company
+      operationId: getAllCompanies
+      summary: Busca todas os empresas cadastradas
+      description: Para utilizar essa rota é preciso estar autenticado, realize o login e insira o token de autenticação no authorize.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Empresas buscadas com sucesso e retornadas no corpo da resposta.
+          $ref: "#/components/responses/Success/GetCompanies"
+        "401":
+          description: Você não está autenticado como administrador.
+          $ref: "#/components/responses/Error"
+        "404":
+          description: Empresas não encontradas.
+          $ref: "#/components/responses/Error"
+        "500":
+          description: O servidor encontrou um erro ao tentar buscar empresas.
+          $ref: "#/components/responses/Error"
+  /api/companies/{company_id}:
+    get:
+      tags:
+        - company
+      operationId: getCompanyById
+      summary: Busca uma empresa
+      description: Para utilizar essa rota é preciso  estar autenticado, realize o login e insira o token de autenticação no authorize.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: company_id
+          in: path
+          description: ID da empresa a ser buscada
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Empresa buscada com sucesso e retornada no corpo da resposta.
+          $ref: "#/components/responses/Success/GetCompany"
+        "404":
+          description: Empresa não encontrada.
+          $ref: "#/components/responses/Error"
+        "401":
+          description: Você não está autenticado como administrador.
+          $ref: "#/components/responses/Error"
+        "422":
+          description: ID de beneficiado fornecido é inválido.
+          $ref: "#/components/responses/Error422"
+        "500":
+          description: O servidor encontrou um erro ao tentar buscar uma empresa.
+          $ref: "#/components/responses/Error"
+    put:
+      tags:
+        - company
+      operationId: updateCompany
+      summary: Atualiza uma empresa
+      description: Para utilizar essa rota é preciso estar autenticado, realize o login e insira o token de autenticação no authorize.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: company_id
+          in: path
+          description: ID da empresa a ser atualizada
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Os dados necessários para atualização da empresa devem ser especificados usando o formato JSON no corpo da requisição.
+        $ref: "#/components/requestBodies/Company"
+      responses:
+        "200":
+          description: Empresa atualizada com sucesso.
+          $ref: "#/components/responses/Success/Default"
+        "401":
+          description: Você não está autenticado como administrador.
+          $ref: "#/components/responses/Error"
+        "404":
+          description: Empresa não encontrada.
+          $ref: "#/components/responses/Error"
+        "422":
+          description: Pelo menos um dos valores enviado no corpo ou parâmetro da requisição é inválido.
+          $ref: "#/components/responses/Error422"
+        "500":
+          description: O servidor encontrou um erro ao tentar atualizar empresa.
+          $ref: "#/components/responses/Error"
+    delete:
+      tags:
+        - company
+      operationId: deleteCompany
+      summary: Deleta uma empresa
+      description: Para utilizar essa rota é preciso estar autenticado, realize o login e insira o token de autenticação no authorize.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: company_id
+          in: path
+          description: ID da empresa a ser deletada
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Empresa deletada com sucesso.
+          $ref: "#/components/responses/Success/Default"
+        "401":
+          description: Você não está autenticado como administrador.
+          $ref: "#/components/responses/Error"
+        "404":
+          description: Empresa não encontrada.
+          $ref: "#/components/responses/Error"
+        "422":
+          description: ID da empresa fornecido é inválido.
+          $ref: "#/components/responses/Error422"
+        "500":
+          description: O servidor encontrou um erro ao tentar deletar empresa.
+          $ref: "#/components/responses/Error"
+
+components:
+  schemas:
+    # ADMIN
+    LoginAdmin:
+      type: object
+      properties:
+        username:
+          type: string
+          examples: [admin]
+        password:
+          type: string
+          examples: [admin]
+      required:
+        - username
+        - password
+    UpdateAdmin:
+      type: object
+      properties:
+        username:
+          type: string
+          examples: [string]
+    Admin:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+          format: string
+          examples: ["string"]
+        password:
+          type: string
+          format: string
+          examples: ["string"]
+        createdAt:
+          type: timestamp
+          format: timestamp
+          examples: ["2024-05-08T01:15:11.599Z"]
+        updatedAt:
+          type: timestamp
+          format: timestamp
+          examples: ["2024-05-08T01:15:11.599Z"]
+      required:
+        - id
+        - username
+        - password
+        - createdAt
+        - updatedAt
+    # VOLUNTARY
+    Voluntary:
+      type: object
+      properties:
+        first_name:
+          type: string
+          format: string
+          examples: ["Carlos"]
+        last_name:
+          type: string
+          format: string
+          examples: ["Silva"]
+        email:
+          type: string
+          format: string
+          examples: ["carlos.silva@gmail.com"]
+        phone:
+          type: string
+          format: string
+          examples: ["11 987654321"]
+        description:
+          type: string
+          format: string
+          examples: ["Carlos Silva é um jovem engenheiro civil que sempre buscou fazer a diferença na vida das pessoas. Após ver as imagens das casas destruídas pelas tragédias recentes, ele sentiu a necessidade de contribuir de forma prática. Carlos quer ser um voluntário no projeto Reconstrua porque acredita na importância de reconstruir não apenas as casas físicas, mas também a confiança e a esperança nas pessoas que foram afetadas. Ele está ansioso para usar suas habilidades e conhecimentos para ajudar a reconstruir casas e, assim, ajudar a reconstruir vidas."]
+      required:
+        - first_name
+        - last_name
+        - email
+        - phone
+        - description
+    # BENEFICIARY
+    Beneficiary:
+      type: object
+      properties:
+        first_name:
+          type: string
+          format: string
+          examples: ["Maria"]
+        last_name:
+          type: string
+          format: string
+          examples: ["Fernandes"]
+        email:
+          type: string
+          format: string
+          examples: ["mariafernandes22@gmail.com"]
+        phone:
+          type: string
+          format: string
+          examples: ["11 987654321"]
+        cep:
+          type: string
+          format: string
+          examples: ["04547-000"]
+        street:
+          type: string
+          format: string
+          examples: ["Rua dos Três Pinos"]
+        neighborhood:
+          type: string
+          format: string
+          examples: ["Vila Mariana"]
+        city:
+          type: string
+          format: string
+          examples: ["São Paulo"]
+        state:
+          type: string
+          format: string
+          examples: ["São Paulo"]
+        address_number:
+          type: number
+          format: number
+          examples: [123]
+        description:
+          type: string
+          format: string
+          examples: ["Maria é uma jovem mãe de dois filhos pequenos que perdeu tudo em um incêndio doméstico. Ela está procurando por uma casa segura para seus filhos e está disposta a ajudar na limpeza e manutenção da nova residência. muito dedicada e trabalha em dois empregos para sustentar sua família. Ela sonha em dar uma vida melhor para seus filhos e está ansiosa para começar a nova fase em sua vida."]
+      required:
+        - first_name
+        - last_name
+        - email
+        - phone
+        - cep
+        - street
+        - neighborhood
+        - city
+        - state
+        - address_number
+        - description
+    # COMPANY
+    Company:
+      type: object
+      properties:
+        company_name:
+          type: string
+          format: string
+          examples: ["Construção Solidária"]
+        email:
+          type: string
+          format: string
+          examples: ["info@construcaosolidaria.com.br"]
+        phone:
+          type: string
+          format: string
+          examples: ["11 987654321"]
+        website:
+          type: string
+          format: string
+          examples: ["https://www.construcaosolidaria.com.br"]
+        cep:
+          type: string
+          format: string
+          examples: ["04547-000"]
+        street:
+          type: string
+          format: string
+          examples: ["Avenida das Nações Unidas"]
+        neighborhood:
+          type: string
+          format: string
+          examples: ["Itaim Bibi"]
+        city:
+          type: string
+          format: string
+          examples: ["São Paulo"]
+        state:
+          type: string
+          format: string
+          examples: ["São Paulo"]
+        address_number:
+          type: number
+          format: number
+          examples: [456]
+        description:
+          type: string
+          format: string
+          examples: ["A Construção Solidária é uma organização sem fins lucrativos dedicada a reconstruir casas para pessoas em situação de rua ou afetadas por tragédias naturais. Com uma equipe de profissionais qualificados e voluntários, a empresa oferece serviços de construção, reparos e reformas, além de fornecer materiais de construção e assistência técnica. A missão da Construção Solidária é proporcionar moradia segura e digna para aqueles que mais precisam, promovendo a solidariedade e a inclusão social."]
+      required:
+        - company_name
+        - email
+        - phone
+        - website
+        - cep
+        - street
+        - neighborhood
+        - city
+        - state
+        - address_number
+        - description
+  # REQUESTS
+  requestBodies:
+    # ADMIN
+    LoginAdmin:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/LoginAdmin"
+      required: true
+    UpdateAdmin:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateAdmin"
+      required: true
+    # VOLUNTARY
+    Voluntary:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Voluntary"
+      required: true
+    # BENEFICARY
+    Beneficiary:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Beneficiary"
+      required: true
+    # COMPANY
+    Company:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Company"
+      required: true
+  # RESPONSES
+  responses:
+    # SUCESS
+    Success:
+      Default:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  examples: [<Mensagem de sucesso>.]
+      # ADMIN
+      LoginAdmin:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  examples: [<Mensagem de sucesso>.]
+                token:
+                  type: string
+                  examples: [token]
+              required:
+                - message
+                - token
+      GetAdmins:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Admin"
+      # VOLUNTARY
+      GetVoluntaries:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  first_name:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  last_name:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  email:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  phone:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  description:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  createdAt:
+                    type: timestamp
+                    format: timestamp
+                    examples: ["2024-05-08T01:15:11.599Z"]
+                  updatedAt:
+                    type: timestamp
+                    format: timestamp
+                    examples: ["2024-05-08T01:15:11.599Z"]
+      GetVoluntary:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                first_name:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                last_name:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                email:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                phone:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                description:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                createdAt:
+                  type: timestamp
+                  format: timestamp
+                  examples: ["2024-05-08T01:15:11.599Z"]
+                updatedAt:
+                  type: timestamp
+                  format: timestamp
+                  examples: ["2024-05-08T01:15:11.599Z"]
+      # BENEFICIARy
+      GetBeneficiaries:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  first_name:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  last_name:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  email:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  phone:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  cep:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  street:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  neighborhood:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  city:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  state:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  address_number:
+                    type: number
+                    format: number
+                    examples: [0]
+                  description:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  createdAt:
+                    type: timestamp
+                    format: timestamp
+                    examples: ["2024-05-06T18:43:14.681Z"]
+                  updatedAt:
+                    type: timestamp
+                    format: timestamp
+                    examples: ["2024-05-06T18:43:14.681Z"]
+      GetBeneficiary:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                first_name:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                last_name:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                email:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                phone:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                cep:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                street:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                neighborhood:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                city:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                state:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                address_number:
+                  type: number
+                  format: number
+                  examples: [0]
+                description:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                createdAt:
+                  type: timestamp
+                  format: timestamp
+                  examples: ["2024-05-06T18:43:14.681Z"]
+                updatedAt:
+                  type: timestamp
+                  format: timestamp
+                  examples: ["2024-05-06T18:43:14.681Z"]
+      # COMPANY
+      GetCompanies:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  company_name:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  email:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  phone:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  website:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  cep:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  street:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  neighborhood:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  city:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  state:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  address_number:
+                    type: number
+                    format: number
+                    examples: [0]
+                  description:
+                    type: string
+                    format: string
+                    examples: ["string"]
+                  createdAt:
+                    type: timestamp
+                    format: timestamp
+                    examples: ["2024-05-06T18:43:14.681Z"]
+                  updatedAt:
+                    type: timestamp
+                    format: timestamp
+                    examples: ["2024-05-06T18:43:14.681Z"]
+      GetCompany:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                company_name:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                email:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                phone:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                website:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                cep:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                street:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                neighborhood:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                city:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                state:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                address_number:
+                  type: number
+                  format: number
+                  examples: [0]
+                description:
+                  type: string
+                  format: string
+                  examples: ["string"]
+                createdAt:
+                  type: timestamp
+                  format: timestamp
+                  examples: ["2024-05-06T18:43:14.681Z"]
+                updatedAt:
+                  type: timestamp
+                  format: timestamp
+                  examples: ["2024-05-06T18:43:14.681Z"]
+    # ERROR
+    Error:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                format: string
+                examples: ["<Mensagem de erro>."]
+            required:
+              - message
+    Error422:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      format: string
+                      example: string
+                    value:
+                      type: string
+                      format: string
+                      example: string
+                    msg:
+                      type: string
+                      format: string
+                      example: string
+                    path:
+                      type: string
+                      format: string
+                      example: string
+                    location:
+                      type: string
+                      format: string
+                      example: string
+
+  # AUTENTICAÇÃO
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Insira o token de autenticação JWT retornado pelo login de administrador
