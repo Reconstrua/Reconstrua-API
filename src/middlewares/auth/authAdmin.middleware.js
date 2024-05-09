@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { UnauthorizedError, forbiddenError } from "../../helpers/error/apiErros.js";
+import { UnauthorizedError } from "../../helpers/error/apiErros.js";
 import { Admin } from "../../entities/Admin.entity.js";
 
 export const authAdmin = async (req, res, next) => {
@@ -37,7 +37,9 @@ const verifyToken = token => {
 const findAdminById = async id => {
   const admin = await Admin.findOne({ where: { id } });
   if (!admin) {
-    throw new forbiddenError("Acesso negado, não existe admin com esse token.");
+    throw new UnauthorizedError(
+      "Acesso negado, não existe admin com esse token.",
+    );
   }
   return admin;
 };
